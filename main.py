@@ -5,6 +5,7 @@ import random
 player_health=20
 from enum import Enum
 equiped = []
+heal_last_turn = False
 
 class bcolors:
     HEADER = '\033[95m'
@@ -98,6 +99,7 @@ def calculate_damage(sword, monster):
 def turn(move):
     global player_health
     global equiped
+    global heal_last_turn
     biggest_monster = 15
     #print("move: " + move)
     number=0
@@ -141,8 +143,13 @@ def turn(move):
                     player_health=player_health-number
                     return True
         case '♡':
-            player_health=player_health+number
-            return True
+            if heal_last_turn == True:
+                print(f"{bcolors.FAIL}You can't heal two turns in a row{bcolors.ENDC}")
+                return False
+            else:
+                player_health=player_health+number
+                heal_last_turn = True
+                return True
         case '♢':
             answer = some_user_input("Do you want to equip this card? y/n ")
             if answer == 'y':
@@ -152,6 +159,7 @@ def turn(move):
 
 def scoundrel(hand, deck, skip_last):
     global player_health
+    global heal_last_turn
     if player_health<=0:
         print(f"{bcolors.FAIL}DEAD{bcolors.ENDC}\n\n")
         again = some_user_input("Would you like to play again?\n\n")
@@ -168,7 +176,7 @@ def scoundrel(hand, deck, skip_last):
     print("Equip - " + str(equiped))
     print("Your health is: " + str(player_health))
     print("{} cards remaining".format(str(len(deck))))
-    decision = input("What's your move then cowboy?\n\n")
+    decision = input("What's your move then cowboy?")
 
     if decision in 'abcds' and len(decision)==1:
         print("")
@@ -222,6 +230,7 @@ def scoundrel(hand, deck, skip_last):
         exit()
     elif len(remaining_card)==1 and len(deck)>0:
         print(f'{bcolors.OKCYAN}remaining_card: {bcolors.ENDC}' + str(remaining_card))
+        heal_last_turn = False
         new_hand(deck, remaining_card, skip_last)
     
     decision = ""

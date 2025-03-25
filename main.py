@@ -1,6 +1,5 @@
 suits = "♤♧♡♢"
 ranks = "23456789TJQKA"
-cards = []
 import random
 player_health=20
 from enum import Enum
@@ -37,6 +36,7 @@ class face_card(Enum):
 def generate_deck():
     print("♤♧♡♢\n")
     #print("23456789TJQKA")
+    cards = []
 
     for i in range(4):
         if i<2:

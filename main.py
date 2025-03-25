@@ -64,20 +64,29 @@ def some_user_input(text):
             print("That's not gonna work")
             exit()
 
-def new_hand(deck, hand):
+def new_hand(deck, hand, skip_last):
+    if skip_last == True:
+        
+        random.shuffle(hand)
+        hand.extend(deck)
+        deck = hand
+        hand = []
+
+        for i in range(4):
+            hand.append(deck.pop())
+        scoundrel(hand, deck, skip_last)
+
     if len(deck)>3:
         for i in range(3):
             hand.append(deck.pop())
-        print(str(len(deck)) + " cards remaining")
-        scoundrel(hand, deck)
+        scoundrel(hand, deck, skip_last)
     elif len(deck)==0:
         print("You've done it you scoundrel")
         exit()
     else:
         for i in range(len(deck)):
             hand.append(deck.pop())
-        print("{} cards remaining" % str(len(deck)))
-        scoundrel(hand, deck)
+        scoundrel(hand, deck, skip_last)
 
 def calculate_damage(sword, monster):
     if sword>=monster:
@@ -137,11 +146,11 @@ def turn(move):
         case '♢':
             answer = some_user_input("Do you want to equip this card? y/n ")
             if answer == 'y':
-                print('equiped\n')
+                print(f'{bcolors.OKGREEN}equiped{bcolors.ENDC}\n')
                 equiped = [move]
             return True
 
-def scoundrel(hand, deck):
+def scoundrel(hand, deck, skip_last):
     global player_health
     if player_health<=0:
         print(f"{bcolors.FAIL}DEAD{bcolors.ENDC}\n\n")
@@ -158,13 +167,14 @@ def scoundrel(hand, deck):
     print("Hand  - " + str(hand))
     print("Equip - " + str(equiped))
     print("Your health is: " + str(player_health))
-
+    print("{} cards remaining".format(str(len(deck))))
     decision = input("What's your move then cowboy?\n\n")
+
     if decision in 'abcds' and len(decision)==1:
         print("")
     else:
         print(f"{bcolors.FAIL}That's not gonna work{bcolors.ENDC}")
-        scoundrel(hand, deck)
+        scoundrel(hand, deck, skip_last)
 
             
     #USERINPUT
@@ -172,23 +182,34 @@ def scoundrel(hand, deck):
         case 'a':
             valid_move = turn(hand[0])
             if(valid_move):
+                skip_last = False
                 hand[0] = '//'
         case 'b':
             valid_move = turn(hand[1])
             if(valid_move):
+                skip_last = False
                 hand[1] = '//'
         case 'c':
             valid_move = turn(hand[2])
             if(valid_move):
+                skip_last = False
                 hand[2] = '//'
         case 'd':
             valid_move = turn(hand[3])
             if(valid_move):
+                skip_last = False
                 hand[3] = '//'
         case 's':
-            #TODO
-            print('wip')
-            
+            count = [x for x in hand if x == '//']
+            if skip_last == True:
+                print(f"{bcolors.FAIL}You can't skip two turns in a row{bcolors.ENDC}")
+            elif len(count)==0:
+                skip_last = True
+                new_hand(deck, hand, skip_last)
+                
+            else:
+                print(f"{bcolors.FAIL}You can only skip with a full hand, soz :({bcolors.ENDC}")
+
             #shuffle hand
             #ensure moves_taken=0
             #put the cards back in at the bottom of the deck
@@ -201,17 +222,18 @@ def scoundrel(hand, deck):
         exit()
     elif len(remaining_card)==1 and len(deck)>0:
         print(f'{bcolors.OKCYAN}remaining_card: {bcolors.ENDC}' + str(remaining_card))
-        new_hand(deck, remaining_card)
+        new_hand(deck, remaining_card, skip_last)
     
     decision = ""
 
-    scoundrel(hand,deck)
+    scoundrel(hand,deck, skip_last)
 
 
 def new_game():
     deck = generate_deck()
     random.shuffle(deck)
     hand = []
+    skip_last = False
     for i in range(4):
         hand.append(deck.pop())
     
@@ -220,7 +242,7 @@ def new_game():
     print("There are " + str(len(deck)) + " cards remaining")
     print("")
 
-    scoundrel(hand, deck)
+    scoundrel(hand, deck, skip_last)
 
 
 if __name__ == "__main__":

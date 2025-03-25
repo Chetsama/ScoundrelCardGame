@@ -6,6 +6,17 @@ player_health=20
 from enum import Enum
 equiped = []
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
 class choice(Enum):
     a=1
     b=2
@@ -53,10 +64,32 @@ def some_user_input(text):
             print("That's not gonna work")
             exit()
 
+def new_hand(deck, hand):
+    if len(deck)>3:
+        for i in range(3):
+            hand.append(deck.pop())
+        print(str(len(deck)) + " cards remaining")
+        scoundrel(hand, deck)
+    elif len(deck)==0:
+        print("You've done it you scoundrel")
+        exit()
+    else:
+        for i in range(len(deck)):
+            hand.append(deck.pop())
+        print("{} cards remaining" % str(len(deck)))
+        scoundrel(hand, deck)
+
+def calculate_damage(sword, monster):
+    if sword>=monster:
+        damage = 0
+    else:
+        damage = monster-sword
+    return damage
 
 def turn(move):
     global player_health
     global equiped
+    biggest_monster = 15
     #print("move: " + move)
     number=0
     if move == "//":
@@ -73,8 +106,14 @@ def turn(move):
     
     match move[0]:
         case monster if monster in '♤♧':
+            if len(equiped)>1:
+                if equiped[len(equiped)-1][1] in 'TJQKA':
+                    biggest_monster = int(str(face_card[equiped[len(equiped)-1][1]]))
+                else:
+                    biggest_monster = int(equiped[len(equiped)-1][1])
             if equiped == []:
                 player_health=player_health-number
+                return True
             else:
                 answer = some_user_input("Do you want to use your equiped card? y/n\n")
                 if answer == 'y':
@@ -82,106 +121,96 @@ def turn(move):
                         weapon_strength = int(str(face_card[equiped[0][1]]))
                     else:
                         weapon_strength = int(equiped[0][1])
-
-                    player_health=player_health-number+int(weapon_strength)
-                    equiped.append(move)
+                    if number>biggest_monster:
+                        print(f"{bcolors.WARNING}This is an invalid move{bcolors.ENDC}")
+                        return False
+                    else:
+                        player_health=player_health-calculate_damage(weapon_strength, number)
+                        equiped.append(move)
+                        return True
                 else:
                     player_health=player_health-number
+                    return True
         case '♡':
             player_health=player_health+number
+            return True
         case '♢':
             answer = some_user_input("Do you want to equip this card? y/n ")
             if answer == 'y':
-                print('equiped')
+                print('equiped\n')
                 equiped = [move]
-                
+            return True
 
-def new_hand(deck, hand):
-    
-    if len(deck)>3:
-        for i in range(3):
-            hand.append(deck.pop())
-        print(str(len(deck)) + " cards remaining")
-        scoundrel(hand, deck)
-    elif len(deck)==0:
-        print("You've done it you scoundrel")
-        exit()
-    else:
-        for i in range(len(deck)):
-            hand.append(deck.pop())
-        print(str(len(deck)) + " cards remaining")
-        scoundrel(hand, deck)
-
-def scoundrel(hand, deck):    
+def scoundrel(hand, deck):
+    global player_health
+    if player_health<=0:
+        print(f"{bcolors.FAIL}DEAD{bcolors.ENDC}\n\n")
+        again = some_user_input("Would you like to play again?\n\n")
+        if again == 'y':
+            player_health=20
+            new_game()
+        else:
+            exit()
+    if player_health>20:
+        player_health=20
+        
     #USERINPUT
-    print("Hand - " + str(hand))
-    print("Equip- " + str(equiped))
+    print("Hand  - " + str(hand))
+    print("Equip - " + str(equiped))
     print("Your health is: " + str(player_health))
 
-    moves_taken=0
-    while(moves_taken<3):
-        decision = input("What's your move then cowboy?\n\n")
-        try:
-            if decision in 'abcds' and len(decision)==1:
-                print("")
-            else:
-                print("That's not gonna work")
-                decision = input("What's your move then cowboy?\n")
-        except:
-            print("That's not gonna work")
-            decision = input("What's your move then cowboy?\n")
+    decision = input("What's your move then cowboy?\n\n")
+    if decision in 'abcds' and len(decision)==1:
+        print("")
+    else:
+        print(f"{bcolors.FAIL}That's not gonna work{bcolors.ENDC}")
+        scoundrel(hand, deck)
 
+            
     #USERINPUT
-        match decision:
-            case 'a':
-                turn(hand[0])
+    match decision:
+        case 'a':
+            valid_move = turn(hand[0])
+            if(valid_move):
                 hand[0] = '//'
-                moves_taken+=1
-            case 'b':
-                turn(hand[1])
+        case 'b':
+            valid_move = turn(hand[1])
+            if(valid_move):
                 hand[1] = '//'
-                moves_taken+=1
-            case 'c':
-                turn(hand[2])
+        case 'c':
+            valid_move = turn(hand[2])
+            if(valid_move):
                 hand[2] = '//'
-                moves_taken+=1
-            case 'd':
-                turn(hand[3])
+        case 'd':
+            valid_move = turn(hand[3])
+            if(valid_move):
                 hand[3] = '//'
-                moves_taken+=1
-            case 's':
-                #TODO
-                print('wip')
-                #shuffle hand
-                #ensure moves_taken=0
-                #put the cards back in at the bottom of the deck
-        
-        #TODO check if all cards are used
-        if moves_taken==3:
-            remaining_card = [x for x in hand if x != '//']
-            print('remaining_card: ' + str(remaining_card))
-            new_hand(deck, remaining_card)
-        else:
-            print("Hand - " + str(hand))
-            print("Equip- " + str(equiped))
-            print("Your health is: " + str(player_health))
-        
-        decision = ""
+        case 's':
+            #TODO
+            print('wip')
+            
+            #shuffle hand
+            #ensure moves_taken=0
+            #put the cards back in at the bottom of the deck
+    
+    #TODO check if all cards are used
+    
+    remaining_card = [x for x in hand if x != '//']
+    if len(remaining_card)==0 and len(deck)==0:
+        print("You've done it you scoundrel")
+        exit()
+    elif len(remaining_card)==1 and len(deck)>0:
+        print(f'{bcolors.OKCYAN}remaining_card: {bcolors.ENDC}' + str(remaining_card))
+        new_hand(deck, remaining_card)
+    
+    decision = ""
+
+    scoundrel(hand,deck)
 
 
-
-
-if __name__ == "__main__":
+def new_game():
     deck = generate_deck()
-    
-    
-    #print(cards)
     random.shuffle(deck)
-
-    # diamonds sword
-    # hearts potion
-    # clubs & spades monsters
-
     hand = []
     for i in range(4):
         hand.append(deck.pop())
@@ -192,6 +221,10 @@ if __name__ == "__main__":
     print("")
 
     scoundrel(hand, deck)
-    
-    
-    #main()
+
+
+if __name__ == "__main__":
+    # diamonds sword
+    # hearts potion
+    # clubs & spades monsters
+    new_game()

@@ -94,6 +94,7 @@ def calculate_damage(sword, monster):
         damage = 0
     else:
         damage = monster-sword
+        print(f"{bcolors.FAIL}You took {bcolors.ENDC}" + str(damage) + f"{bcolors.FAIL} damage{bcolors.ENDC}\n")
     return damage
 
 def turn(move):
@@ -124,6 +125,7 @@ def turn(move):
                     biggest_monster = int(equiped[len(equiped)-1][1])
             if equiped == []:
                 player_health=player_health-number
+                print(f"{bcolors.FAIL}You took {bcolors.ENDC}" + str(number) + f"{bcolors.FAIL} damage{bcolors.ENDC}\n")
                 return True
             else:
                 answer = some_user_input("Do you want to use your equiped card? y/n\n")
@@ -133,7 +135,7 @@ def turn(move):
                     else:
                         weapon_strength = int(equiped[0][1])
                     if number>biggest_monster:
-                        print(f"{bcolors.WARNING}This is an invalid move{bcolors.ENDC}")
+                        print(f"{bcolors.WARNING}This is an invalid move{bcolors.ENDC}\n")
                         return False
                     else:
                         player_health=player_health-calculate_damage(weapon_strength, number)
@@ -144,9 +146,10 @@ def turn(move):
                     return True
         case '♡':
             if heal_last_turn == True:
-                print(f"{bcolors.FAIL}You can't heal two turns in a row{bcolors.ENDC}")
+                print(f"{bcolors.FAIL}You can't heal two turns in a row{bcolors.ENDC}\n")
                 return False
             else:
+                print(f"{bcolors.FAIL}!!!HEALTH INCREASED!!!{bcolors.ENDC}\n")
                 player_health=player_health+number
                 heal_last_turn = True
                 return True
@@ -181,7 +184,9 @@ def scoundrel(hand, deck, skip_last):
     if decision in 'abcds' and len(decision)==1:
         print("")
     else:
-        print(f"{bcolors.FAIL}That's not gonna work{bcolors.ENDC}")
+        print("")
+        print(f"{bcolors.FAIL}\nThat's not gonna work{bcolors.ENDC}\n")
+        print("")
         scoundrel(hand, deck, skip_last)
 
             
@@ -210,13 +215,14 @@ def scoundrel(hand, deck, skip_last):
         case 's':
             count = [x for x in hand if x == '//']
             if skip_last == True:
-                print(f"{bcolors.FAIL}You can't skip two turns in a row{bcolors.ENDC}")
+                print(f"{bcolors.FAIL}You can't skip two turns in a row{bcolors.ENDC}\n")
             elif len(count)==0:
+                print(f"{bcolors.OKBLUE}skipping hand{bcolors.ENDC}\n")
                 skip_last = True
                 new_hand(deck, hand, skip_last)
                 
             else:
-                print(f"{bcolors.FAIL}You can only skip with a full hand, soz :({bcolors.ENDC}")
+                print(f"{bcolors.FAIL}You can only skip with a full hand, soz :({bcolors.ENDC}\n")
 
             #shuffle hand
             #ensure moves_taken=0
@@ -229,7 +235,7 @@ def scoundrel(hand, deck, skip_last):
         print("You've done it you scoundrel")
         exit()
     elif len(remaining_card)==1 and len(deck)>0:
-        print(f'{bcolors.OKCYAN}remaining_card: {bcolors.ENDC}' + str(remaining_card))
+        print(f'{bcolors.OKCYAN}remaining_card: {bcolors.ENDC}' + str(remaining_card) + "\n")
         heal_last_turn = False
         new_hand(deck, remaining_card, skip_last)
     

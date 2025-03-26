@@ -91,7 +91,7 @@ def new_hand(deck, hand, skip_last):
 
 def calculate_damage(sword, monster):
     if sword>=monster:
-        print(f"{bcolors.HEADER}You took vanquished the monster, poor thing{bcolors.ENDC}\n")
+        print(f"{bcolors.HEADER}You vanquished the monster, poor thing{bcolors.ENDC}\n")
         damage = 0
     else:
         damage = monster-sword

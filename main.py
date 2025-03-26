@@ -147,8 +147,8 @@ def turn(move):
                     return True
         case '♡':
             if heal_last_turn == True:
-                print(f"{bcolors.FAIL}You can't heal two turns in a row{bcolors.ENDC}\n")
-                return False
+                print(f"{bcolors.FAIL}You can't heal two turns in a row, card has been burned{bcolors.ENDC}\n")
+                return True
             else:
                 print(f"{bcolors.OKGREEN}!!!HEALTH INCREASED!!!{bcolors.ENDC}\n")
                 player_health=player_health+number

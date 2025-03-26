@@ -249,6 +249,7 @@ def new_game():
     deck = generate_deck()
     random.shuffle(deck)
     hand = []
+    equiped = []
     skip_last = False
     for i in range(4):
         hand.append(deck.pop())

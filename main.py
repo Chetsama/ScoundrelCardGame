@@ -246,6 +246,7 @@ def scoundrel(hand, deck, skip_last):
 
 
 def new_game():
+    global equiped
     deck = generate_deck()
     random.shuffle(deck)
     hand = []

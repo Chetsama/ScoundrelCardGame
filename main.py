@@ -150,7 +150,7 @@ def turn(move):
                 print(f"{bcolors.FAIL}You can't heal two turns in a row{bcolors.ENDC}\n")
                 return False
             else:
-                print(f"{bcolors.FAIL}!!!HEALTH INCREASED!!!{bcolors.ENDC}\n")
+                print(f"{bcolors.OKGREEN}!!!HEALTH INCREASED!!!{bcolors.ENDC}\n")
                 player_health=player_health+number
                 heal_last_turn = True
                 return True

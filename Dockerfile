@@ -1,7 +1,10 @@
+# Use the latest debian, this is large and could be swapped for a python image
 FROM debian:latest
 
+# Set the working directory in the container
 WORKDIR /usr/src
 
+# install various dependencies
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
@@ -20,6 +23,8 @@ RUN apt-get update && apt-get install -y \
     wget \
     && rm -rf /var/lib/apt/lists/*
 
+# Copy the file main.py (use . for current directory contents) into /usr/src/ 
 COPY main.py .
 
+# Run the command "python3 main.py" 
 CMD ["python3", "main.py"]

@@ -18,3 +18,10 @@ ScoundrelCardGame is a terminal-based card game where players use strategy to de
 - **Dynamic Gameplay**: Cards are shuffled and dealt randomly, ensuring a unique experience every time.
 - **Health Management**: Players start with 20 health points and must avoid reaching 0.
 - **Strategic Decisions**: Decide when to heal, equip weapons, or attack monsters.
+
+## To Run 
+The docker image can be found here https://hub.docker.com/r/chetsama/scoundrel-card-game
+
+```
+docker run -it chetsama/scoundrel-card-game
+```
